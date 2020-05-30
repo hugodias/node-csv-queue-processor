@@ -9,10 +9,20 @@ interface AppDependencies {
 }
 
 export class App {
-  constructor(private dependencies: AppDependencies) {}
+  private input: string;
+  private output?: string;
 
-  private truncateOutputFIle(outputFile: string) {
-    fs.truncate(outputFile, 0, function (err) {
+  constructor(private dependencies: AppDependencies) {
+    const staticDirectory = `${__dirname}/static`;
+
+    this.input = `${staticDirectory}/${this.dependencies.inputFile}`;
+    this.output = this.dependencies.outputFile
+      ? `${staticDirectory}/${this.dependencies.outputFile}`
+      : null;
+  }
+
+  private truncateOutputFile() {
+    fs.truncate(this.output, 0, function (err) {
       if (err) throw err;
     });
   }
@@ -22,14 +32,11 @@ export class App {
   }
 
   public run(): void {
-    const inputFile = `${__dirname}/static/${this.dependencies.inputFile}`;
-
-    if (this.dependencies.outputFile) {
-      const outputFile = `${__dirname}/static/${this.dependencies.outputFile}`;
-      this.truncateOutputFIle(outputFile);
+    if (this.output) {
+      this.truncateOutputFile();
     }
 
-    this.readCSVFile(inputFile).on("data", (data) => {
+    this.readCSVFile(this.input).on("data", (data) => {
       this.dependencies.queue.push(data);
     });
   }
