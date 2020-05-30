@@ -36,7 +36,7 @@ export class Processor {
       input
     );
 
-    if (this.dependencies.output === "stdout") {
+    if (!this.dependencies.output) {
       console.log(data);
     } else {
       this.writeToFile(data);
@@ -44,12 +44,10 @@ export class Processor {
   }
 
   private writeToFile(data: ServerData): void {
-    const outputPath = `${__dirname}/static/${this.dependencies.output}`;
     const output = `${data.response}\n`;
     console.log("write");
-    fs.appendFile(outputPath, output, function (err) {
+    fs.appendFile(this.dependencies.output, output, function (err) {
       if (err) throw err;
-      console.log(`appended`);
     });
   }
 }

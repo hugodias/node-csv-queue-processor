@@ -4,25 +4,15 @@ import { ProcessQueue } from "./queue";
 
 interface AppDependencies {
   inputFile: string;
-  outputFile?: string;
+  output?: string;
   queue: ProcessQueue;
 }
 
 export class App {
-  private input: string;
-  private output?: string;
-
-  constructor(private dependencies: AppDependencies) {
-    const staticDirectory = `${__dirname}/static`;
-
-    this.input = `${staticDirectory}/${this.dependencies.inputFile}`;
-    this.output = this.dependencies.outputFile
-      ? `${staticDirectory}/${this.dependencies.outputFile}`
-      : null;
-  }
+  constructor(private dependencies: AppDependencies) {}
 
   private truncateOutputFile() {
-    fs.truncate(this.output, 0, function (err) {
+    fs.truncate(this.dependencies.output, 0, function (err) {
       if (err) throw err;
     });
   }
@@ -32,11 +22,11 @@ export class App {
   }
 
   public run(): void {
-    if (this.output) {
+    if (this.dependencies.output) {
       this.truncateOutputFile();
     }
 
-    this.readCSVFile(this.input).on("data", (data) => {
+    this.readCSVFile(this.dependencies.inputFile).on("data", (data) => {
       this.dependencies.queue.push(data);
     });
   }
