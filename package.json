@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/better-queue": "^3.8.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "better-queue": "^3.8.10",
     "csv-parser": "^2.3.2",
     "date-fns": "^2.9.0",
